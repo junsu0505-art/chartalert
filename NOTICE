@@ -1,0 +1,83 @@
+NOTICE — chartalert 외부 OSS 의존성
+
+본 프로젝트는 다음 OSS 의존성을 사용합니다.
+
+=============================================================================
+
+ENTRY 1
+Source:       https://github.com/tradingview/lightweight-charts
+Version:      5.2.0 (npm: lightweight-charts)
+License:      Apache-2.0
+Adopted on:   2026-05-19
+Modification: import only, no source modification
+
+Apache-2.0 전문: https://www.apache.org/licenses/LICENSE-2.0
+
+=============================================================================
+
+ENTRY 2
+Source:       https://github.com/difurious/lightweight-charts-line-tools
+Version:      4.1.1 (npm: lightweight-charts-line-tools)
+License:      Apache-2.0
+Adopted on:   2026-05-19
+Modification: import only (with --ignore-scripts), wrapper at src/lib/charts/line-tools.ts
+
+Apache-2.0 전문: https://www.apache.org/licenses/LICENSE-2.0
+
+=============================================================================
+
+ENTRY 3
+Source:       https://github.com/deepentropy/lightweight-charts-drawing
+Version:      0.1.1 (npm: lightweight-charts-drawing)
+License:      MIT
+Adopted on:   2026-05-19
+Modification: import only, wrapper at src/lib/charts/drawing.ts
+
+MIT License
+Copyright (c) deepentropy contributors
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=============================================================================
+
+ENTRY 4
+Source:       https://github.com/anandanand84/technicalindicators
+Version:      3.1.0 (npm: technicalindicators)
+License:      MIT
+Adopted on:   2026-05-19
+Modification: import only, wrapper at src/lib/indicators/index.ts
+
+MIT License
+Copyright (c) 2016 Ananda Anand
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=============================================================================
+
+각 lib 의 LICENSE 전문은 node_modules/<package-name>/LICENSE 참조.
