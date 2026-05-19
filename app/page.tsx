@@ -326,6 +326,7 @@ export default function Page() {
             symbol={symbol}
             exchange={exchange}
             timeframe={timeframe}
+            currentTool={currentTool}
             onTrendlineDrawn={handleTrendlineDrawn}
             onHorizontalDrawn={handleHorizontalDrawn}
             indicators={chartIndicators}

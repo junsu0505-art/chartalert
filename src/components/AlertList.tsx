@@ -134,7 +134,7 @@ function AlertRow({ alert, onRemove, onPause, onResume }: AlertRowProps) {
   const canResume = alert.status === 'paused'
 
   return (
-    <li className="flex items-center gap-3 rounded-lg bg-gray-800 px-4 py-3">
+    <li data-testid="alert-item" className="flex items-center gap-3 rounded-lg bg-gray-800 px-4 py-3">
       {/* icon */}
       <span className="text-gray-400">
         <AlertIcon kind={alert.kind} />

@@ -18,7 +18,7 @@
 
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   createChart,
   CandlestickSeries,
@@ -33,12 +33,11 @@ import {
 } from '../lib/charts/index.js'
 import {
   DrawingManager,
-  TrendLine,
-  HorizontalLine,
-  type IDrawing,
 } from 'lightweight-charts-drawing'
 import { useWsTicks } from './hooks/useWsTicks.js'
 import { useKlines } from './hooks/useKlines.js'
+import { useDrawingTool } from './hooks/useDrawingTool.js'
+import type { DrawingTool } from './hooks/useDrawingTool.js'
 import { calcRSI, calcEMA, calcMACD } from '../lib/indicators/index.js'
 import type { Exchange, Timeframe, TrendlinePoint } from '../types.js'
 
@@ -50,6 +49,7 @@ export interface ChartProps {
   symbol: string
   exchange: Exchange
   timeframe: Timeframe
+  currentTool: DrawingTool
   onTrendlineDrawn?: (p1: TrendlinePoint, p2: TrendlinePoint) => void
   onHorizontalDrawn?: (price: number) => void
   indicators?: {
@@ -58,6 +58,8 @@ export interface ChartProps {
     macd?: { fast: number; slow: number; signal: number }
   }
 }
+
+export type { DrawingTool }
 
 // ---------------------------------------------------------------------------
 // Dark theme palette
@@ -82,6 +84,7 @@ export default function Chart({
   symbol,
   exchange,
   timeframe,
+  currentTool,
   onTrendlineDrawn,
   onHorizontalDrawn,
   indicators,
@@ -89,10 +92,18 @@ export default function Chart({
   // ── container ref
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // ── chart / series / manager refs (no re-render needed)
+  // ── chart / series / manager refs (no re-render needed for indicators/ticks)
   const chartRef = useRef<IChartApi | null>(null)
   const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
   const managerRef = useRef<DrawingManager | null>(null)
+
+  // ── drawing-ready state: chart/series/manager 가 mount 후 세팅되면 trigger
+  // useDrawingTool 은 이 state 변화로 re-run 됨 (refs 는 useEffect deps 로 동작 X)
+  const [drawingReady, setDrawingReady] = useState<{
+    chart: IChartApi
+    series: ISeriesApi<'Candlestick'>
+    manager: DrawingManager
+  } | null>(null)
   const indicatorSeriesRef = useRef<{
     rsi?: ISeriesApi<'Line'>
     emaFast?: ISeriesApi<'Line'>
@@ -151,29 +162,11 @@ export default function Chart({
     manager.attach(chart, candleSeries, container)
     managerRef.current = manager
 
-    // drawing:added 이벤트 → 완성된 drawing 좌표 콜백
-    const unsub = manager.on('drawing:added', (event) => {
-      const drawing: IDrawing | undefined = event.drawing
-      if (!drawing || !drawing.isValid()) return
+    // useDrawingTool deps trigger: chart/series/manager 준비 완료 신호
+    setDrawingReady({ chart, series: candleSeries, manager })
 
-      if (drawing.type === 'trend-line') {
-        const [a1, a2] = drawing.anchors
-        if (!a1 || !a2) return
-        const p1: TrendlinePoint = {
-          time: anchorTimeToUnixSeconds(a1.time),
-          price: a1.price,
-        }
-        const p2: TrendlinePoint = {
-          time: anchorTimeToUnixSeconds(a2.time),
-          price: a2.price,
-        }
-        onTrendlineDrawn?.(p1, p2)
-      } else if (drawing.type === 'horizontal-line') {
-        const [anchor] = drawing.anchors
-        if (!anchor) return
-        onHorizontalDrawn?.(anchor.price)
-      }
-    })
+    // NOTE: drawing:added 콜백 제거 — useDrawingTool hook 의 subscribeClick 가
+    // 직접 addDrawing 후 onTrendlineDrawn/onHorizontalDrawn 콜백을 발동하므로 중복 X
 
     // ResizeObserver — 컨테이너 크기 변경 시 차트 리사이즈
     const ro = new ResizeObserver((entries) => {
@@ -186,7 +179,7 @@ export default function Chart({
 
     // UP-15 cleanup
     return () => {
-      unsub()
+      setDrawingReady(null)
       ro.disconnect()
       manager.detach()
       managerRef.current = null
@@ -240,6 +233,17 @@ export default function Chart({
     updateIndicators(candles.map((c) => ({ time: c.time, close: c.close })))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indicators])
+
+  // ── 5. 마우스 드로잉 도구 — subscribeClick 기반 (UP-15: cleanup 은 hook 내부)
+  // drawingReady state 를 deps 로 사용 — ref.current 는 useEffect deps 로 동작 X
+  useDrawingTool({
+    chart: drawingReady?.chart ?? null,
+    series: drawingReady?.series ?? null,
+    manager: drawingReady?.manager ?? null,
+    tool: currentTool,
+    onTrendlineDrawn,
+    onHorizontalDrawn,
+  })
 
   // ---------------------------------------------------------------------------
   // indicators helper (chart 내부 상태 직접 참조)
