@@ -4,6 +4,18 @@
 
 ---
 
+## 0. 밤사이 추가 fix (Tom 자는 동안)
+
+### R-Fix-Drawing (commit f940664)
+- 발견된 진짜 버그: deepentropy/lightweight-charts-drawing 은 프로그램적 addDrawing 만 — 마우스 클릭 → 라인 그리기 X
+- 자체 useDrawingTool hook 작성 (chart.subscribeClick 2회 → 좌표 캡처 → new TrendLine + manager.addDrawing)
+- **Playwright e2e 2/2 PASS** — 실 브라우저 마우스 click → AlertList 자동 추가 검증
+- 추세선 = toolbar 추세선 → 차트 2 click, 수평선 = toolbar 수평선 → 차트 1 click
+- screenshot 박제: C:\chartalert\test-results\drawing-trendline.png + drawing-horizontal.png
+- Vercel auto-deploy: https://chartalert-nine.vercel.app 새 commit 활성 (검증 HTTP 200)
+
+---
+
 ## 1. 현 상태 (밤사이 완료)
 
 | 항목 | 결과 |
