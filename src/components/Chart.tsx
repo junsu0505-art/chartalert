@@ -135,7 +135,7 @@ export default function Chart({
       },
       handleScroll: {
         mouseWheel: true,           // wheel zoom 유지
-        pressedMouseMove: false,    // 좌클릭 drag panning 비활성 (drawing 우선)
+        pressedMouseMove: true,     // default = cursor mode = panning ON
         horzTouchDrag: true,        // 모바일 가로 swipe panning 유지
         vertTouchDrag: false,       // 모바일 세로 swipe panning 비활성 (drawing 우선)
       },
@@ -255,6 +255,24 @@ export default function Chart({
     onTrendlineDrawn,
     onHorizontalDrawn,
   })
+
+  // ── 6. currentTool 변화 시 panning 동적 전환
+  // cursor = panning ON (TV 같은 UX), drawing 도구 = panning OFF (drawing 우선)
+  useEffect(() => {
+    const chart = chartRef.current
+    if (!chart) return
+
+    const isPanningMode = currentTool === 'cursor'
+
+    chart.applyOptions({
+      handleScroll: {
+        mouseWheel: true,                    // wheel zoom 항상 OK
+        pressedMouseMove: isPanningMode,     // cursor 만 좌클릭 drag panning
+        horzTouchDrag: isPanningMode,        // 모바일도 동일
+        vertTouchDrag: false,               // 모바일 세로 drag 항상 X (drawing 우선)
+      },
+    })
+  }, [currentTool])
 
   // ---------------------------------------------------------------------------
   // indicators helper (chart 내부 상태 직접 참조)
