@@ -133,6 +133,17 @@ export default function Chart({
       crosshair: {
         mode: CrosshairMode.Normal,
       },
+      handleScroll: {
+        mouseWheel: true,           // wheel zoom 유지
+        pressedMouseMove: false,    // 좌클릭 drag panning 비활성 (drawing 우선)
+        horzTouchDrag: true,        // 모바일 가로 swipe panning 유지
+        vertTouchDrag: false,       // 모바일 세로 swipe panning 비활성 (drawing 우선)
+      },
+      handleScale: {
+        axisPressedMouseMove: { time: true, price: true }, // axis 영역 drag = zoom 유지
+        mouseWheel: true,
+        pinch: true,
+      },
       rightPriceScale: {
         borderColor: DARK_GRID,
       },
